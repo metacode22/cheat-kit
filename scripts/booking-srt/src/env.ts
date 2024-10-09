@@ -10,7 +10,7 @@ export const envSchema = z.object({
   SRT_비밀번호: z.string(),
   출발역: z.string(),
   도착역: z.string(),
-  출발일: z.string(),
+  출발일: z.string().default(today()),
   출발시간: z.string().default("00"),
   예약하고자_하는_기차_범위_시작: z.coerce.number().min(1).max(10).default(1),
   예약하고자_하는_기차_범위_종료: z.coerce.number().min(1).max(10).default(10),
@@ -28,3 +28,13 @@ export const env = envSchema.parse({
   예약하고자_하는_기차_범위_종료: process.env.TARGET_TRAIN_RANGE_END,
   타겟_예매_유형들: process.env.TARGET_RESERVATION_TYPES?.split(","),
 });
+
+function today() {
+  const date = new Date();
+
+  return (
+    date.getFullYear().toString() +
+    (date.getMonth() + 1).toString().padStart(2, "0") +
+    date.getDate().toString().padStart(2, "0")
+  );
+}
