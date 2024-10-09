@@ -111,6 +111,8 @@ async function main() {
         const span = await link?.$("span");
         const spanText = await span?.evaluate((element) => element.textContent);
         if (hasTargetReservationTypes(spanText)) {
+          retry = MAX_RETRY_COUNT;
+
           /**
            * @description "입석+좌석"이 타겟일 경우 alert 뜰 수 있음. 이를 닫음.
            */
@@ -122,7 +124,6 @@ async function main() {
 
           await link?.click();
           await page.waitForNavigation();
-          retry = MAX_RETRY_COUNT;
           /**
            * @todo 소리 등으로 사용자에게 알리기
            */
