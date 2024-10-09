@@ -1,29 +1,16 @@
 import puppeteer, { Browser, ElementHandle } from "puppeteer";
 import { env } from "./env";
+import { MAX_RETRY_COUNT, SELECTORS, SLEEP_TIME, URLS } from "./constants";
 
-const EXECUTABLE_PATH = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const SRT_아이디 = env.SRT_아이디;
 const SRT_비밀번호 = env.SRT_비밀번호;
-const URLS = {
-  SRT_HOME_URL: "https://etk.srail.kr/cmc/01/selectLoginForm.do?pageId=TK0701000000",
-  SRT_BOOKING_URL: "https://etk.srail.kr/hpg/hra/01/selectScheduleList.do?pageId=TK0101010000",
-};
-const SELECTORS = {
-  ID_INPUT: "#srchDvNm01",
-  PASSWORD_INPUT: "#hmpgPwdCphd01",
-  CONFIRM_BUTTON: "input[type='submit']",
-  DEPARTURE_STATION_INPUT: "#dptRsStnCdNm",
-  ARRIVAL_STATION_INPUT: "#arvRsStnCdNm",
-  TRAIN_TYPE_RADIO: "#trnGpCd300",
-  DEPARTURE_DATE_INPUT: "#dptDt",
-  DEPARTURE_TIME_INPUT: "#dptTm",
-  SEARCH_BUTTON: "#search_top_tag > input",
-};
 const 출발역 = env.출발역;
 const 도착역 = env.도착역;
 const 출발일 = env.출발일;
 const 출발시간 = env.출발시간;
-const TARGET_RESERVATION_TYPE: ("입석+좌석" | "예약하기")[] = ["예약하기"];
+const 타겟_예매_유형들: TargetReservationTypes[] = env.타겟_예매_유형들;
+
+type TargetReservationTypes = "입석+좌석" | "예약하기";
 
 async function main() {
   // 브라우저 실행
@@ -51,8 +38,8 @@ async function main() {
   // 페이지 이동 대기
   await page.waitForNavigation();
 
-  // 팝업들 닫기
-  await closePopups(browser);
+  // 팝업 닫기
+  await closePopup(browser);
 
   // 예매 페이지 이동
   await page.goto(URLS.SRT_BOOKING_URL);
@@ -110,44 +97,70 @@ async function main() {
   // 페이지 이동 대기
   await page.waitForNavigation();
 
-  /**
-   * @todo 0이랑 9를 input으로 받을 수 있게 + 상수로 관리
-   * @todo 매진 시 될 때까지 가능하도록
-   */
-  // 예약하기
-  const rows = await page.$$("table tbody tr");
-  for (let i = 0; i <= 9; i++) {
-    const row = rows[i];
+  // 예약할 수 있을 때까지 반복
+  let retry = 0;
+  while (retry < MAX_RETRY_COUNT) {
+    retry++;
 
-    if (row) {
-      const link = await row.$("td:nth-child(7) a");
-      const span = await link?.$("span");
-      const spanText = await span?.evaluate((element) => element.textContent);
-      if (spanText === "예약하기") {
-        await link?.click();
-        /**
-         * @todo 소리 등으로 사용자에게 알리기
-         */
+    const rows = await page.$$("table tbody tr");
+    for (let i = env.예약하고자_하는_기차_범위_시작 - 1; i < env.예약하고자_하는_기차_범위_종료; i++) {
+      const row = rows[i];
 
-        break;
+      if (row) {
+        const link = await row.$("td:nth-child(7) a");
+        const span = await link?.$("span");
+        const spanText = await span?.evaluate((element) => element.textContent);
+        if (hasTargetReservationTypes(spanText)) {
+          /**
+           * @description "입석+좌석"이 타겟일 경우 alert 뜰 수 있음. 이를 닫음.
+           */
+          page.on("dialog", async (dialog) => {
+            if (dialog.type() === "alert") {
+              await dialog.dismiss();
+            }
+          });
+
+          await link?.click();
+          await page.waitForNavigation();
+          retry = MAX_RETRY_COUNT;
+          /**
+           * @todo 소리 등으로 사용자에게 알리기
+           */
+
+          break;
+        }
       }
+    }
+
+    await wait(SLEEP_TIME);
+    await page.reload();
+
+    if (retry > MAX_RETRY_COUNT) {
+      console.log("최대 재시도 횟수 초과로 예약 실패");
+
+      await browser.close();
+      break;
     }
   }
 }
 
 main();
 
-async function closePopups(browser: Browser) {
+async function closePopup(browser: Browser) {
   return await new Promise((resolve) => {
-    let count = 0;
-
     browser.on("targetcreated", async (target) => {
-      count++;
       const page = await target.page();
       await page?.close();
-      count--;
 
-      if (count === 0) resolve({ success: true });
+      resolve({ success: true });
     });
   });
+}
+
+function hasTargetReservationTypes(reservationType?: string | null) {
+  return reservationType && 타겟_예매_유형들.includes(reservationType as TargetReservationTypes);
+}
+
+function wait(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }

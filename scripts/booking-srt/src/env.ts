@@ -11,7 +11,10 @@ export const envSchema = z.object({
   출발역: z.string(),
   도착역: z.string(),
   출발일: z.string(),
-  출발시간: z.string(),
+  출발시간: z.string().default("00"),
+  예약하고자_하는_기차_범위_시작: z.coerce.number().min(1).max(10).default(1),
+  예약하고자_하는_기차_범위_종료: z.coerce.number().min(1).max(10).default(10),
+  타겟_예매_유형들: z.array(z.enum(["예약하기", "입석+좌석"])).default(["예약하기"]),
 });
 
 export const env = envSchema.parse({
@@ -21,4 +24,7 @@ export const env = envSchema.parse({
   도착역: process.env.TARGET_ARRIVAL_STATION,
   출발일: process.env.TARGET_DEPARTURE_DATE,
   출발시간: process.env.TARGET_DEPARTURE_TIME,
+  예약하고자_하는_기차_범위_시작: process.env.TARGET_TRAIN_RANGE_START,
+  예약하고자_하는_기차_범위_종료: process.env.TARGET_TRAIN_RANGE_END,
+  타겟_예매_유형들: process.env.TARGET_RESERVATION_TYPES?.split(","),
 });
