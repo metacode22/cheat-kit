@@ -3,10 +3,14 @@ import nodemailer from "nodemailer";
 import { env } from "./env";
 
 async function main() {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    protocolTimeout: 300000,
+  });
 
   const page = await browser.newPage();
   await page.goto("https://www.cnn.com/markets/fear-and-greed");
+  await page.waitForNavigation();
 
   const fearAndGreedIndexTag = await page.waitForSelector(
     "body > div.layout__content-wrapper.layout-with-rail__content-wrapper > section.layout__wrapper.layout-with-rail__wrapper > section.layout__main-wrapper.layout-with-rail__main-wrapper > section.layout__main.layout-with-rail__main > div > section > div.market-tabbed-container > div.market-tabbed-container__content > div.market-tabbed-container__tab.market-tabbed-container__tab--1 > div > div.market-fng-gauge__overview > div.market-fng-gauge__meter-container > div > div.market-fng-gauge__dial-number > span",
