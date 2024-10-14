@@ -17,6 +17,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install
       - name: Run fear-and-greed-index script
-        run: turbo fear-and-greed-index
+        run: pnpm fear-and-greed-index
         env:
           GOOGLE_APP_PASSWORD: ${{ secrets.GOOGLE_APP_PASSWORD }}
