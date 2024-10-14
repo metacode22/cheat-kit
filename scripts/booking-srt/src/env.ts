@@ -5,7 +5,7 @@ import path from "path";
 const envPath = path.resolve(__dirname, "../.env");
 config({ path: envPath });
 
-export const envSchema = z.object({
+const envSchema = z.object({
   SRT_아이디: z.string(),
   SRT_비밀번호: z.string(),
   출발역: z.string(),
