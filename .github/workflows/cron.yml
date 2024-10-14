@@ -1,0 +1,22 @@
+name: Send Fear and Greed Index
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  send-fear-and-greed-index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        run: pnpm install
+      - name: Run fear-and-greed-index script
+        run: pnpm run fear-and-greed-index
+        env:
+          GOOGLE_APP_PASSWORD: ${{ secrets.GOOGLE_APP_PASSWORD }}
