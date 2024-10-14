@@ -11,12 +11,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v2
+        with:
+          version: 8
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: pnpm
       - name: Install dependencies
+        working-directory: ./scripts/fear-and-greed-index
         run: pnpm install
       - name: Run fear-and-greed-index script
+        working-directory: ./scripts/fear-and-greed-index
         run: pnpm fear-and-greed-index
         env:
           GOOGLE_APP_PASSWORD: ${{ secrets.GOOGLE_APP_PASSWORD }}
