@@ -3,10 +3,7 @@ import nodemailer from "nodemailer";
 import { env } from "./env";
 
 async function main() {
-  const browser = await puppeteer.launch({
-    headless: false,
-    args: ["--start-maximized"],
-  });
+  const browser = await puppeteer.launch();
 
   const page = await browser.newPage();
   await page.goto("https://www.cnn.com/markets/fear-and-greed");
