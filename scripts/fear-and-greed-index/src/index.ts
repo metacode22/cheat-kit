@@ -3,7 +3,7 @@ import nodemailer from "nodemailer";
 import { env } from "./env";
 
 async function main() {
-  // await wait(random(0, 600_000)); // 0초 ~ 10분, 크롤링 차단 방지
+  await wait(random(0, 600_000)); // 0초 ~ 10분, 크롤링 차단 방지
 
   const browser = await puppeteer.launch({
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
