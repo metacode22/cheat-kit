@@ -3,12 +3,15 @@ import nodemailer from "nodemailer";
 import { env } from "./env";
 
 async function main() {
+  await wait(random(0, 600_000)); // 0초 ~ 10분, 크롤링 차단 방지
+
   const browser = await puppeteer.launch({
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
     protocolTimeout: 3000000,
   });
 
   const page = await browser.newPage();
+  // fake user agent
   await page.setUserAgent(
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
   );
@@ -57,4 +60,12 @@ function getFearAndGreedLevel(value: number) {
   ];
 
   return ranges.find((range) => value >= range.min && value <= range.max)?.level ?? "Invalid value";
+}
+
+async function wait(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function random(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
 }

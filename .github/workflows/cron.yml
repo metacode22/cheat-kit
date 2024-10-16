@@ -1,9 +1,10 @@
 name: Send Fear and Greed Index
 
+# 한국 시간 기준, 평일 오전 9시와 오후 11시
 on:
-  push:
-    branches:
-      - main
+  schedule:
+    - cron: "0 0 * * 1-5"
+    - cron: "0 14 * * 1-5"
 
 jobs:
   send-fear-and-greed-index:
