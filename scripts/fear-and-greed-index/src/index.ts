@@ -7,7 +7,8 @@ async function main() {
 
   const browser = await puppeteer.launch({
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    protocolTimeout: 3000000,
+    protocolTimeout: 300000,
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
   });
 
   const page = await browser.newPage();
@@ -15,12 +16,14 @@ async function main() {
   await page.setUserAgent(
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
   );
-  await page.goto("https://www.cnn.com/markets/fear-and-greed");
+  await page.goto("https://www.cnn.com/markets/fear-and-greed", {
+    timeout: 300000,
+  });
 
   const fearAndGreedIndexTag = await page.waitForSelector(
     "body > div.layout__content-wrapper.layout-with-rail__content-wrapper > section.layout__wrapper.layout-with-rail__wrapper > section.layout__main-wrapper.layout-with-rail__main-wrapper > section.layout__main.layout-with-rail__main > div > section > div.market-tabbed-container > div.market-tabbed-container__content > div.market-tabbed-container__tab.market-tabbed-container__tab--1 > div > div.market-fng-gauge__overview > div.market-fng-gauge__meter-container > div > div.market-fng-gauge__dial-number > span",
     {
-      timeout: 3000000,
+      timeout: 300000,
     },
   );
   const fearAndGreedIndex = await page.evaluate((element) => element?.textContent, fearAndGreedIndexTag);
