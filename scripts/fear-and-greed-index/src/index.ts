@@ -42,7 +42,7 @@ async function main() {
   try {
     await transporter.sendMail({
       from: "alohajune22@gmail.com",
-      to: ["alohajune22@gmail.com"],
+      to: ["alohajune22@gmail.com", "junhwan.seo@teamsparta.co", "st.oh@teamsparta.co"],
       subject: `공포탐욕지수: ${fearAndGreedIndex}, ${fearAndGreedLevel}`,
       text: `공포탐욕지수: ${fearAndGreedIndex}, ${fearAndGreedLevel}`,
     });

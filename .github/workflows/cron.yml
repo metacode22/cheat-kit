@@ -2,10 +2,9 @@ name: Send Fear and Greed Index
 
 on:
   schedule:
-    - cron: "0 0 * * 1-5"
-    - cron: "30 8 * * 1-5"
-    - cron: "0 14 * * 1-5"
-    - cron: "15 14 * * 1-5"
+    - cron: "0 0 * * 1-5" # 한국 시간 기준 9시
+    - cron: "30 8 * * 1-5" # 한국 시간 기준 17시 30분
+    - cron: "0 14 * * 1-5" # 한국 시간 기준 23시
 
 jobs:
   send-fear-and-greed-index:
