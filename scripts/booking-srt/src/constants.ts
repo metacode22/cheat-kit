@@ -15,6 +15,6 @@ export const SELECTORS = {
   SEARCH_BUTTON: "#search_top_tag > input",
 };
 
-export const SLEEP_TIME = 2000;
-
 export const MAX_RETRY_COUNT = 1000;
+
+export const SECONDS = 1000;

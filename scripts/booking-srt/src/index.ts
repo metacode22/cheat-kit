@@ -1,6 +1,6 @@
 import puppeteer, { Browser, ElementHandle } from "puppeteer";
+import { MAX_RETRY_COUNT, SECONDS, SELECTORS, URLS } from "./constants";
 import { env } from "./env";
-import { MAX_RETRY_COUNT, SELECTORS, SLEEP_TIME, URLS } from "./constants";
 
 const SRT_아이디 = env.SRT_아이디;
 const SRT_비밀번호 = env.SRT_비밀번호;
@@ -39,7 +39,7 @@ async function main() {
   await page.waitForNavigation();
 
   // 팝업 닫기
-  await closePopup(browser);
+  // await closePopup(browser);
 
   // 예매 페이지 이동
   await page.goto(URLS.SRT_BOOKING_URL);
@@ -102,6 +102,13 @@ async function main() {
   while (retry < MAX_RETRY_COUNT) {
     retry++;
 
+    // table 태그가 없으면 '조회하기' 버튼 클릭
+    const table = await page.$("table");
+    if (!table) {
+      const searchButton = await page.waitForSelector(`${SELECTORS.SEARCH_BUTTON}`);
+      await searchButton?.click();
+    }
+
     const rows = await page.$$("table tbody tr");
     for (let i = env.예약하고자_하는_기차_범위_시작 - 1; i < env.예약하고자_하는_기차_범위_종료; i++) {
       const row = rows[i];
@@ -133,7 +140,7 @@ async function main() {
       }
     }
 
-    await wait(SLEEP_TIME);
+    await wait(random(1 * SECONDS, 3 * SECONDS));
     await page.reload();
 
     if (retry > MAX_RETRY_COUNT) {
@@ -164,4 +171,8 @@ function hasTargetReservationTypes(reservationType?: string | null) {
 
 function wait(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function random(min: number, max: number) {
+  return Math.random() * (max - min) + min;
 }
