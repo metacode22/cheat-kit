@@ -1,6 +1,8 @@
 import puppeteer, { Browser, ElementHandle } from "puppeteer";
 import { MAX_RETRY_COUNT, SECONDS, SELECTORS, URLS } from "./constants";
 import { env } from "./env";
+import fs from "fs";
+import path from "path";
 
 const SRT_아이디 = env.SRT_아이디;
 const SRT_비밀번호 = env.SRT_비밀번호;
@@ -131,9 +133,17 @@ async function main() {
 
           await link?.click();
           await page.waitForNavigation();
+
           /**
-           * @todo 소리 등으로 사용자에게 알리기
+           * @description 예약 성공 소리 재생
            */
+          const successSound = fs.readFileSync(path.join(__dirname, "./success-sound.mp3"), { encoding: "base64" });
+          const successSoundBase64 = `data:audio/mp3;base64,${successSound}`;
+
+          await page.evaluate((successSoundBase64) => {
+            const audio = new Audio(successSoundBase64);
+            audio.play();
+          }, successSoundBase64);
 
           break;
         }
