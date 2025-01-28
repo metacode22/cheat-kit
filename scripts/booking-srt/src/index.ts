@@ -120,8 +120,6 @@ async function main() {
         const span = await link?.$("span");
         const spanText = await span?.evaluate((element) => element.textContent);
         if (hasTargetReservationTypes(spanText)) {
-          retry = MAX_RETRY_COUNT;
-
           /**
            * @description "입석+좌석"이 타겟일 경우 alert 뜰 수 있음. 이를 닫음.
            */
@@ -135,6 +133,19 @@ async function main() {
           await page.waitForNavigation();
 
           /**
+           * @description '잔여석없음'이라는 문자가 있으면 '확인' 버튼을 누른다.
+           */
+          const noSeatText = await page.evaluate(() => {
+            return document.body.innerText.includes(SELECTORS.NO_SEAT_TEXT);
+          });
+          if (noSeatText) {
+            const confirmButton = await page.waitForSelector(SELECTORS.CONFIRM_BUTTON_WHEN_NO_SEAT);
+            await confirmButton?.click();
+            await page.waitForNavigation();
+            continue;
+          }
+
+          /**
            * @description 예약 성공 소리 재생
            */
           const successSound = fs.readFileSync(path.join(__dirname, "./success-sound.mp3"), { encoding: "base64" });
@@ -143,7 +154,10 @@ async function main() {
           await page.evaluate((successSoundBase64) => {
             const audio = new Audio(successSoundBase64);
             audio.play();
+            console.log("succeed");
           }, successSoundBase64);
+
+          retry = MAX_RETRY_COUNT;
 
           break;
         }

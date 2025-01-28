@@ -13,6 +13,8 @@ export const SELECTORS = {
   DEPARTURE_DATE_INPUT: "#dptDt",
   DEPARTURE_TIME_INPUT: "#dptTm",
   SEARCH_BUTTON: "#search_top_tag > input",
+  NO_SEAT_TEXT: "잔여석없음",
+  CONFIRM_BUTTON_WHEN_NO_SEAT: "a:has-text('확인')",
 };
 
 export const MAX_RETRY_COUNT = 1000;
