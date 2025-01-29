@@ -135,9 +135,10 @@ async function main() {
           /**
            * @description '잔여석없음'이라는 문자가 있으면 '확인' 버튼을 누른다.
            */
-          const noSeatText = await page.evaluate(() => {
-            return document.body.innerText.includes(SELECTORS.NO_SEAT_TEXT);
-          });
+          const noSeatText = await page.evaluate(
+            (noSeatText) => document.body.innerText.includes(noSeatText),
+            SELECTORS.NO_SEAT_TEXT,
+          );
           if (noSeatText) {
             const confirmButton = await page.waitForSelector(SELECTORS.CONFIRM_BUTTON_WHEN_NO_SEAT);
             await confirmButton?.click();
@@ -164,10 +165,10 @@ async function main() {
       }
     }
 
-    await wait(random(1 * SECONDS, 3 * SECONDS));
+    await wait(random(0.5 * SECONDS, 1 * SECONDS));
     await page.reload();
 
-    if (retry > MAX_RETRY_COUNT) {
+    if (retry >= MAX_RETRY_COUNT) {
       console.log("최대 재시도 횟수 초과로 예약 실패");
 
       await browser.close();
@@ -178,16 +179,16 @@ async function main() {
 
 main();
 
-async function closePopup(browser: Browser) {
-  return await new Promise((resolve) => {
-    browser.on("targetcreated", async (target) => {
-      const page = await target.page();
-      await page?.close();
+// async function closePopup(browser: Browser) {
+//   return await new Promise((resolve) => {
+//     browser.on("targetcreated", async (target) => {
+//       const page = await target.page();
+//       await page?.close();
 
-      resolve({ success: true });
-    });
-  });
-}
+//       resolve({ success: true });
+//     });
+//   });
+// }
 
 function hasTargetReservationTypes(reservationType?: string | null) {
   return reservationType && 타겟_예매_유형들.includes(reservationType as TargetReservationTypes);

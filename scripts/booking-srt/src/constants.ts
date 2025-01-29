@@ -14,7 +14,7 @@ export const SELECTORS = {
   DEPARTURE_TIME_INPUT: "#dptTm",
   SEARCH_BUTTON: "#search_top_tag > input",
   NO_SEAT_TEXT: "잔여석없음",
-  CONFIRM_BUTTON_WHEN_NO_SEAT: "a:has-text('확인')",
+  CONFIRM_BUTTON_WHEN_NO_SEAT: "#wrap > div.container.container-e > div > div.sub_con_area > div:nth-child(7) > a",
 };
 
 export const MAX_RETRY_COUNT = 1000;
