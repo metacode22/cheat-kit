@@ -14,7 +14,11 @@
       "cache": false,
       "persistent": true
     },
-    "booking-srt": {},
-    "fear-and-greed-index": {}
+    "booking-srt": {
+      "cache": false
+    },
+    "fear-and-greed-index": {
+      "cache": false
+    }
   }
 }
