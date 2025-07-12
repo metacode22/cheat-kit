@@ -17,6 +17,6 @@ export const SELECTORS = {
   CONFIRM_BUTTON_WHEN_NO_SEAT: "#wrap > div.container.container-e > div > div.sub_con_area > div:nth-child(7) > a",
 };
 
-export const MAX_RETRY_COUNT = 1000;
+export const MAX_RETRY_COUNT = 3000;
 
 export const SECONDS = 1000;
