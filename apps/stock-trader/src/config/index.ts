@@ -1,4 +1,4 @@
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -9,8 +9,12 @@ export const config = {
   },
   kis: {
     API_BASE_URL: process.env.KIS_API_BASE_URL,
-    APP_KEY: process.env.KIS_APP_KEY ?? "",
-    APP_SECRET: process.env.KIS_APP_SECRET ?? "",
-    WEB_SOCKET_URL: process.env.KIS_WEB_SOCKET_URL ?? "",
+    APP_KEY: process.env.KIS_APP_KEY ?? '',
+    APP_SECRET: process.env.KIS_APP_SECRET ?? '',
+    WEB_SOCKET_URL: process.env.KIS_WEB_SOCKET_URL ?? '',
+  },
+  account: {
+    CANO: process.env.CANO ?? '',
+    ACNT_PRDT_CD: process.env.ACNT_PRDT_CD ?? '',
   },
 };

@@ -1,13 +1,13 @@
 import { KisApiClient } from "@/clients/kis";
 import { ONE_MINUTE } from "@/constants/time";
-import { Service } from "typedi";
+import { Inject, Service } from "typedi";
 
 @Service()
 export class AuthService {
   private accessToken: string | null = null;
   private accessTokenExpiresAt: Date | null = null;
-
-  constructor(private readonly kisApiClient: KisApiClient) {}
+  @Inject(() => KisApiClient)
+  private readonly kisApiClient: KisApiClient;
 
   public async getAccessToken() {
     const 토큰이_현재보다_1분_이상_남았다면 =
