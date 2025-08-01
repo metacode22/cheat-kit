@@ -1,5 +1,7 @@
 import { config } from '@/config';
+import { KIS_TR_ID } from '@/constants/kis';
 import { PostAccessTokenResponseDto, PostWebSocketApprovalKeyResponseDto } from '@/dtos/kis/auth';
+import { BuyOrderRequestDto, PostOrderRequestDto, SellOrderRequestDto } from '@/dtos/kis/order';
 import { AuthService } from '@/services/auth.service';
 import axios from 'axios';
 import { parse } from 'date-fns';
@@ -35,40 +37,50 @@ export class KisApiClient {
     return approval_key;
   }
 
-  /**
-   * @todo request dto 정의
-   */
-  public async buy() {
+  public async buy({ PDNO, ORD_QTY, OVRS_ORD_UNPR }: BuyOrderRequestDto) {
     const accessToken = await this.authService.getAccessToken();
-    console.log('🚀 ~ KisApiClient ~ buy ~ accessToken:', accessToken);
-    try {
-      const { data } = await kis.post(
-        '/uapi/overseas-stock/v1/trading/order',
-        {
-          CANO: config.account.CANO,
-          ACNT_PRDT_CD: config.account.ACNT_PRDT_CD,
-          OVRS_EXCG_CD: 'NASD',
-          PDNO: 'SDST', // 스타더스트 파워
-          ORD_QTY: '1',
-          ORD_DVSN: '00',
-          OVRS_ORD_UNPR: '0.1',
-          ORD_SVR_DVSN_CD: "0"
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            appkey: config.kis.APP_KEY,
-            appsecret: config.kis.APP_SECRET,
-            tr_id: 'TTTT1002U',
-            custtype: 'P',
-          },
-        },
-      );
-      console.log('🚀 ~ KisApiClient ~ buy ~ data:', data);
-    } catch (error) {
-      console.error('Error during buy operation:', error);
-    }
+    const request: PostOrderRequestDto = {
+      CANO: config.account.CANO,
+      ACNT_PRDT_CD: config.account.ACNT_PRDT_CD,
+      OVRS_EXCG_CD: 'NASD',
+      PDNO,
+      ORD_QTY,
+      ORD_DVSN: '00',
+      OVRS_ORD_UNPR,
+      ORD_SVR_DVSN_CD: '0',
+    };
+    await kis.post('/uapi/overseas-stock/v1/trading/order', request, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        appkey: config.kis.APP_KEY,
+        appsecret: config.kis.APP_SECRET,
+        tr_id: KIS_TR_ID.미국_매수_주문,
+        custtype: 'P',
+      },
+    });
   }
 
-  public async sell() {}
+  public async sell({ PDNO, ORD_QTY, OVRS_ORD_UNPR }: SellOrderRequestDto) {
+    const accessToken = await this.authService.getAccessToken();
+    const request: PostOrderRequestDto = {
+      CANO: config.account.CANO,
+      ACNT_PRDT_CD: config.account.ACNT_PRDT_CD,
+      OVRS_EXCG_CD: 'NASD',
+      PDNO,
+      ORD_QTY,
+      ORD_DVSN: '00',
+      OVRS_ORD_UNPR,
+      ORD_SVR_DVSN_CD: '0',
+      SLL_TYPE: '00',
+    };
+    await kis.post('/uapi/overseas-stock/v1/trading/order', request, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        appkey: config.kis.APP_KEY,
+        appsecret: config.kis.APP_SECRET,
+        tr_id: KIS_TR_ID.미국_매도_주문,
+        custtype: 'P',
+      },
+    });
+  }
 }

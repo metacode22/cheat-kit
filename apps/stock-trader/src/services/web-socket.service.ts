@@ -36,10 +36,6 @@ export class WebSocketService {
     });
     this.webSocket.on("message", (data: WebSocket.Data) => {
       const message = data.toString();
-      /**
-       * @todo message 파싱 필요.
-       */
-      console.log(message);
     });
   }
 }
