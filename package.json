@@ -9,9 +9,9 @@
     "fear-and-greed-index": "ts-node scripts/fear-and-greed-index/src/index.ts"
   },
   "devDependencies": {
-    "prettier": "^3.2.5",
-    "turbo": "^2.1.3",
-    "typescript": "^5.4.5"
+    "prettier": "^3.6.2",
+    "turbo": "^2.5.5",
+    "typescript": "^5.9.2"
   },
   "packageManager": "pnpm@8.15.6",
   "engines": {
