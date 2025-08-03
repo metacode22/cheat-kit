@@ -35,6 +35,9 @@ importers:
       express:
         specifier: ^5.1.0
         version: 5.1.0
+      reflect-metadata:
+        specifier: ^0.2.2
+        version: 0.2.2
       typedi:
         specifier: ^0.10.0
         version: 0.10.0
@@ -1518,6 +1521,10 @@ packages:
     dependencies:
       picomatch: 2.3.1
     dev: true
+
+  /reflect-metadata@0.2.2:
+    resolution: {integrity: sha512-urBwgfrvVP/eAyXx4hluJivBKzuEbSQs9rKWCrCkbSxNv8mxPcUZKeuoF3Uy4mJl3Lwprp6yy5/39VWigZ4K6Q==}
+    dev: false
 
   /require-directory@2.1.1:
     resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}
