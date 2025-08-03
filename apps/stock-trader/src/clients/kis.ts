@@ -1,7 +1,10 @@
 import { config } from '@/config';
 import { KIS_TR_ID } from '@/constants/kis';
 import { PostAccessTokenResponseDto, PostWebSocketApprovalKeyResponseDto } from '@/dtos/kis/auth';
+import { GetBalanceResponseDto } from '@/dtos/kis/balance/responses.dto';
 import { BuyOrderRequestDto, PostOrderRequestDto, SellOrderRequestDto } from '@/dtos/kis/order';
+import { GetDailyPriceResponseDto } from '@/dtos/kis/price';
+import { GetDailyPriceRequestDto } from '@/dtos/kis/price/requests.dto';
 import { AuthService } from '@/services/auth.service';
 import axios from 'axios';
 import { parse } from 'date-fns';
@@ -37,16 +40,16 @@ export class KisApiClient {
     return approval_key;
   }
 
-  public async buy({ PDNO, ORD_QTY, OVRS_ORD_UNPR }: BuyOrderRequestDto) {
+  public async buy({ ticker, quantity, price }: BuyOrderRequestDto) {
     const accessToken = await this.authService.getAccessToken();
     const request: PostOrderRequestDto = {
       CANO: config.account.CANO,
       ACNT_PRDT_CD: config.account.ACNT_PRDT_CD,
       OVRS_EXCG_CD: 'NASD',
-      PDNO,
-      ORD_QTY,
+      PDNO: ticker,
+      ORD_QTY: quantity.toString(),
       ORD_DVSN: '00',
-      OVRS_ORD_UNPR,
+      OVRS_ORD_UNPR: price.toString(),
       ORD_SVR_DVSN_CD: '0',
     };
     await kis.post('/uapi/overseas-stock/v1/trading/order', request, {
@@ -60,16 +63,16 @@ export class KisApiClient {
     });
   }
 
-  public async sell({ PDNO, ORD_QTY, OVRS_ORD_UNPR }: SellOrderRequestDto) {
+  public async sell({ ticker, quantity, price }: SellOrderRequestDto) {
     const accessToken = await this.authService.getAccessToken();
     const request: PostOrderRequestDto = {
       CANO: config.account.CANO,
       ACNT_PRDT_CD: config.account.ACNT_PRDT_CD,
       OVRS_EXCG_CD: 'NASD',
-      PDNO,
-      ORD_QTY,
+      PDNO: ticker,
+      ORD_QTY: quantity.toString(),
       ORD_DVSN: '00',
-      OVRS_ORD_UNPR,
+      OVRS_ORD_UNPR: price.toString(),
       ORD_SVR_DVSN_CD: '0',
       SLL_TYPE: '00',
     };
@@ -82,5 +85,48 @@ export class KisApiClient {
         custtype: 'P',
       },
     });
+  }
+
+  public async getBalance() {
+    const accessToken = await this.authService.getAccessToken();
+    const { data } = await kis.get<GetBalanceResponseDto>('/uapi/overseas-stock/v1/trading/inquire-balance', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        appkey: config.kis.APP_KEY,
+        appsecret: config.kis.APP_SECRET,
+        tr_id: KIS_TR_ID.해외주식_잔고조회,
+      },
+      params: {
+        CANO: config.account.CANO,
+        ACNT_PRDT_CD: config.account.ACNT_PRDT_CD,
+        OVRS_EXCG_CD: 'NASD',
+        TR_CRCY_CD: 'USD',
+        CTX_AREA_FK200: '',
+        CTX_AREA_NK200: '',
+      },
+    });
+
+    return data;
+  }
+
+  public async getDailyPrice({ ticker }: GetDailyPriceRequestDto) {
+    const accessToken = await this.authService.getAccessToken();
+    const { data } = await kis.get<GetDailyPriceResponseDto>('/uapi/overseas-price/v1/quotations/dailyprice', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        appkey: config.kis.APP_KEY,
+        appsecret: config.kis.APP_SECRET,
+        tr_id: KIS_TR_ID.해외주식_기간별시세,
+      },
+      params: {
+        EXCD: 'NAS',
+        SYMB: ticker,
+        GUBN: '0',
+        MODP: '1',
+        BYMD: '',
+      },
+    });
+
+    return data;
   }
 }
