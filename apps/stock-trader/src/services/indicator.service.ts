@@ -54,4 +54,11 @@ export class IndicatorService {
 
     return rsis;
   }
+
+  /**
+   * % 단위로 반환
+   */
+  public calculateProfitRate({ currentPrice, averagePrice }: { currentPrice: number; averagePrice: number }) {
+    return ((currentPrice - averagePrice) / averagePrice) * 100;
+  }
 }

@@ -21,12 +21,12 @@ export const config = {
     swing: {
       condition: {
         buy: { rsi: 30 },
-        sell: { rsi: 70 },
+        sell: { rsi: 70, profitRate: 5 },
       },
       target: [
         { name: 'ASML', ticker: 'ASML', quantity: 1 },
-        // { name: '어플라이드 머티리얼즈', ticker: 'AMAT', quantity: 2 },
-        // { name: '아마존', ticker: 'AMZN', quantity: 2 },
+        { name: '어플라이드 머티리얼즈', ticker: 'AMAT', quantity: 2 },
+        { name: '아마존', ticker: 'AMZN', quantity: 2 },
       ],
     },
   },

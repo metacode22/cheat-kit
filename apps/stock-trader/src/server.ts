@@ -3,6 +3,7 @@ import express from 'express';
 import 'reflect-metadata';
 import Container from 'typedi';
 import { SwingTraderService } from './services/swing-trader.service';
+import { ONE_MINUTE } from './constants/time';
 
 async function start() {
   const app = express();
@@ -14,7 +15,13 @@ async function start() {
   });
 
   const swingTraderService = Container.get(SwingTraderService);
-  swingTraderService.execute();
+  setInterval(() => {
+    try {
+      swingTraderService.execute();
+    } catch (error) {
+      console.error(error);
+    }
+  }, ONE_MINUTE);
 }
 
 start();

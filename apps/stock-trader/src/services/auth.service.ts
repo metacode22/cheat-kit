@@ -1,6 +1,6 @@
-import { KisApiClient } from "@/clients/kis";
-import { ONE_MINUTE } from "@/constants/time";
-import { Inject, Service } from "typedi";
+import { KisApiClient } from '@/clients/kis';
+import { ONE_MINUTE } from '@/constants/time';
+import { Inject, Service } from 'typedi';
 
 @Service()
 export class AuthService {
