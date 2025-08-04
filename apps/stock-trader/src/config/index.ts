@@ -20,13 +20,16 @@ export const config = {
   strategy: {
     swing: {
       condition: {
-        buy: { rsi: 30 },
+        buy: { rsi: 35 },
         sell: { rsi: 70, profitRate: 5 },
       },
       target: [
         { name: 'ASML', ticker: 'ASML', quantity: 1 },
         { name: '어플라이드 머티리얼즈', ticker: 'AMAT', quantity: 2 },
         { name: '아마존', ticker: 'AMZN', quantity: 2 },
+        { name: '에어비앤비', ticker: 'ABNB', quantity: 2 },
+        { name: '스타벅스', ticker: 'SBUX', quantity: 2 },
+        { name: '인텔', ticker: 'INTC', quantity: 10 },
       ],
     },
   },
