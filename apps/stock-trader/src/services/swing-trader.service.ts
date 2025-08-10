@@ -14,10 +14,11 @@ export class SwingTraderService {
     console.log('--- 스윙 투자 실행 ---');
     await this.tryBuy();
     await this.trySell();
-    console.log('--- 스윙 투자 종료 ---');
+    console.log('-------------------');
   }
 
   private async tryBuy() {
+    console.log('--- 매수 시도 ---');
     const myStocks = (await this.kisApiClient.getBalance()).output1;
     for (const { name, ticker, quantity } of config.strategy.swing.target) {
       const 이미_보유중인_종목 = myStocks.find(({ ovrs_pdno }) => ticker === ovrs_pdno);
@@ -31,16 +32,19 @@ export class SwingTraderService {
       const rsis = this.indicatorService.calculateRSI({ prices: dailyClosingPrices });
       const currentRsi = rsis[rsis.length - 1];
       const currentPrice = dailyClosingPrices[dailyClosingPrices.length - 1];
+      console.log(name, currentRsi, currentPrice);
       if (!currentRsi || !currentPrice) continue;
 
       if (currentRsi <= config.strategy.swing.condition.buy.rsi) {
         await this.kisApiClient.buy({ ticker, quantity, price: currentPrice });
-        console.log(`${name} 종목 ${currentPrice}원에 ${quantity}주 매수 진행`);
+        console.log(`${name} 종목 ${currentPrice} 달러에 ${quantity}주 매수 진행`);
       }
     }
+    console.log('--- 매수 시도 완료 ---');
   }
 
   private async trySell() {
+    console.log('--- 매도 시도 ---');
     const myStocks = (await this.kisApiClient.getBalance()).output1;
     for (const { name, ticker, quantity } of config.strategy.swing.target) {
       const 이미_보유중인_종목 = myStocks.find(({ ovrs_pdno }) => ticker === ovrs_pdno);
@@ -53,14 +57,18 @@ export class SwingTraderService {
       const currentPrice = dailyClosingPrices[dailyClosingPrices.length - 1];
       if (!currentRsi || !currentPrice) continue;
 
-      if (currentRsi < config.strategy.swing.condition.sell.rsi) continue;
-
       const averagePrice = Number(이미_보유중인_종목.pchs_avg_pric);
       const profitRate = this.indicatorService.calculateProfitRate({ currentPrice, averagePrice });
-      if (profitRate < config.strategy.swing.condition.sell.profitRate) continue;
+      console.log(name, currentRsi, currentPrice, profitRate);
+      if (
+        profitRate < config.strategy.swing.condition.sell.profitRate ||
+        currentRsi < config.strategy.swing.condition.sell.rsi
+      )
+        continue;
 
       await this.kisApiClient.sell({ ticker, quantity, price: currentPrice });
-      console.log(`${name} 종목 ${currentPrice}원에 ${quantity}주 매도 진행`);
+      console.log(`${name} 종목 ${currentPrice} 달러에 ${quantity}주 매도 진행`);
     }
+    console.log('--- 매도 시도 완료 ---');
   }
 }

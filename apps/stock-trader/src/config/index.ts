@@ -20,7 +20,7 @@ export const config = {
   strategy: {
     swing: {
       condition: {
-        buy: { rsi: 35 },
+        buy: { rsi: 27.5 },
         sell: { rsi: 70, profitRate: 5 },
       },
       target: [
@@ -30,6 +30,11 @@ export const config = {
         { name: '에어비앤비', ticker: 'ABNB', quantity: 2 },
         { name: '스타벅스', ticker: 'SBUX', quantity: 2 },
         { name: '인텔', ticker: 'INTC', quantity: 10 },
+        /**
+         * @todo 월마트는 rsi가 30 이하로 잘 떨어지지 않음.
+         * target들마다 따로 rsi를 설정할 수 있도록 수정 필요
+         */
+        { name: '월마트', ticker: 'WMT', quantity: 5 },
       ],
     },
   },
