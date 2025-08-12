@@ -22,6 +22,10 @@ export class SwingTraderService {
     console.log('-------------------');
   }
 
+  /**
+   * @todo 현재는 체결되지 않으면 계속해서 요청함.
+   * 매수 넣으려는 종목이 이미 주문 내역에 존재한다면 매수 주문을 하지 않도록 수정 필요.
+   */
   private async tryBuy() {
     const myStocks = (await this.kisApiClient.getBalance()).output1;
     for (const { name, ticker, quantity, buyCondition, exchange } of config.strategy.swing.targets) {

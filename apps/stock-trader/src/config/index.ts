@@ -34,7 +34,7 @@ export const config = {
           exchange: 'NAS',
           quantity: 2,
           buyCondition: { rsi: 31 },
-          sellCondition: { rsi: 71, minimumProfitRate: 5, profitRate: 9 },
+          sellCondition: { rsi: 71, minimumProfitRate: 5, profitRate: 15 },
         },
         {
           name: '아마존',
@@ -42,7 +42,7 @@ export const config = {
           exchange: 'NAS',
           quantity: 2,
           buyCondition: { rsi: 35 },
-          sellCondition: { rsi: 67, minimumProfitRate: 5, profitRate: 8 },
+          sellCondition: { rsi: 67, minimumProfitRate: 5, profitRate: 15 },
         },
         {
           name: '에어비앤비',
@@ -50,7 +50,7 @@ export const config = {
           exchange: 'NAS',
           quantity: 2,
           buyCondition: { rsi: 27.5 },
-          sellCondition: { rsi: 68.5, minimumProfitRate: 5, profitRate: 8 },
+          sellCondition: { rsi: 68.5, minimumProfitRate: 5, profitRate: 10 },
         },
         {
           name: '스타벅스',
@@ -58,7 +58,7 @@ export const config = {
           exchange: 'NAS',
           quantity: 2,
           buyCondition: { rsi: 27 },
-          sellCondition: { rsi: 70, minimumProfitRate: 5, profitRate: 8 },
+          sellCondition: { rsi: 70, minimumProfitRate: 5, profitRate: 10 },
         },
         {
           name: '인텔',
@@ -66,16 +66,19 @@ export const config = {
           exchange: 'NAS',
           quantity: 10,
           buyCondition: { rsi: 27.5 },
-          sellCondition: { rsi: 70, minimumProfitRate: 5, profitRate: 8 },
+          sellCondition: { rsi: 70, minimumProfitRate: 5, profitRate: 10 },
         },
-        {
-          name: '월마트',
-          ticker: 'WMT',
-          exchange: 'NYS',
-          quantity: 5,
-          buyCondition: { rsi: 36 },
-          sellCondition: { rsi: 72, minimumProfitRate: 5, profitRate: 10 },
-        },
+        /**
+         * @todo 월마트는 거래소가 달라서 그런지 현재 조회가 잘 되지 않음.
+         */
+        // {
+        //   name: '월마트',
+        //   ticker: 'WMT',
+        //   exchange: 'NYS',
+        //   quantity: 5,
+        //   buyCondition: { rsi: 36 },
+        //   sellCondition: { rsi: 72, minimumProfitRate: 5, profitRate: 10 },
+        // },
       ],
     },
   },
