@@ -19,23 +19,57 @@ export const config = {
   },
   strategy: {
     swing: {
-      condition: {
-        buy: { rsi: 27.5 },
-        sell: { rsi: 70, profitRate: 5 },
-      },
-      target: [
-        { name: 'ASML', ticker: 'ASML', quantity: 1 },
-        { name: '어플라이드 머티리얼즈', ticker: 'AMAT', quantity: 2 },
-        { name: '아마존', ticker: 'AMZN', quantity: 2 },
-        { name: '에어비앤비', ticker: 'ABNB', quantity: 2 },
-        { name: '스타벅스', ticker: 'SBUX', quantity: 2 },
-        { name: '인텔', ticker: 'INTC', quantity: 10 },
-        /**
-         * @todo 월마트는 rsi가 30 이하로 잘 떨어지지 않음.
-         * target들마다 따로 rsi를 설정할 수 있도록 수정 필요
-         */
-        { name: '월마트', ticker: 'WMT', quantity: 5 },
+      targets: [
+        {
+          name: 'ASML',
+          ticker: 'ASML',
+          quantity: 1,
+          buyCondition: { rsi: 31 },
+          sellCondition: { rsi: 68.5, minimumProfitRate: 5, profitRate: 12 },
+        },
+        {
+          name: '어플라이드 머티리얼즈',
+          ticker: 'AMAT',
+          quantity: 2,
+          buyCondition: { rsi: 31 },
+          sellCondition: { rsi: 71, minimumProfitRate: 5, profitRate: 9 },
+        },
+        {
+          name: '아마존',
+          ticker: 'AMZN',
+          quantity: 2,
+          buyCondition: { rsi: 35 },
+          sellCondition: { rsi: 67, minimumProfitRate: 5, profitRate: 8 },
+        },
+        {
+          name: '에어비앤비',
+          ticker: 'ABNB',
+          quantity: 2,
+          buyCondition: { rsi: 27.5 },
+          sellCondition: { rsi: 68.5, minimumProfitRate: 5, profitRate: 8 },
+        },
+        {
+          name: '스타벅스',
+          ticker: 'SBUX',
+          quantity: 2,
+          buyCondition: { rsi: 27 },
+          sellCondition: { rsi: 70, minimumProfitRate: 5, profitRate: 8 },
+        },
+        {
+          name: '인텔',
+          ticker: 'INTC',
+          quantity: 10,
+          buyCondition: { rsi: 27.5 },
+          sellCondition: { rsi: 70, minimumProfitRate: 5, profitRate: 8 },
+        },
+        {
+          name: '월마트',
+          ticker: 'WMT',
+          quantity: 5,
+          buyCondition: { rsi: 36 },
+          sellCondition: { rsi: 72, minimumProfitRate: 5, profitRate: 10 },
+        },
       ],
     },
   },
-};
+} as const;
