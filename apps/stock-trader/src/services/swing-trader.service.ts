@@ -12,13 +12,17 @@ export class SwingTraderService {
 
   public async execute() {
     console.log('--- 스윙 투자 실행 ---');
+    console.log('--- 매수 시도');
     await this.tryBuy();
+    console.log('--- 매수 시도 완료');
+    console.log('');
+    console.log('--- 매도 시도');
     await this.trySell();
+    console.log('--- 매도 시도 완료');
     console.log('-------------------');
   }
 
   private async tryBuy() {
-    console.log('--- 매수 시도 ---');
     const myStocks = (await this.kisApiClient.getBalance()).output1;
     for (const { name, ticker, quantity, buyCondition, exchange } of config.strategy.swing.targets) {
       const 이미_보유중인_종목 = myStocks.find(({ ovrs_pdno }) => ticker === ovrs_pdno);
@@ -32,7 +36,7 @@ export class SwingTraderService {
       const rsis = this.indicatorService.calculateRSI({ prices: dailyClosingPrices });
       const currentRsi = rsis[rsis.length - 1];
       const currentPrice = dailyClosingPrices[dailyClosingPrices.length - 1];
-      console.log(name, currentRsi, currentPrice);
+      console.log(name, 'rsi:', currentRsi, '현재 가격:', currentPrice);
       if (!currentRsi || !currentPrice) continue;
 
       if (currentRsi <= buyCondition.rsi) {
@@ -40,11 +44,9 @@ export class SwingTraderService {
         console.log(`✅ ${name} 종목 ${currentPrice} 달러에 ${quantity}주 매수 진행 ✅`);
       }
     }
-    console.log('--- 매수 시도 완료 ---');
   }
 
   private async trySell() {
-    console.log('--- 매도 시도 ---');
     const myStocks = (await this.kisApiClient.getBalance()).output1;
     for (const { name, ticker, quantity, sellCondition, exchange } of config.strategy.swing.targets) {
       const 이미_보유중인_종목 = myStocks.find(({ ovrs_pdno }) => ticker === ovrs_pdno);
@@ -59,7 +61,7 @@ export class SwingTraderService {
 
       const averagePrice = Number(이미_보유중인_종목.pchs_avg_pric);
       const profitRate = this.indicatorService.calculateProfitRate({ currentPrice, averagePrice });
-      console.log(name, currentRsi, currentPrice, profitRate);
+      console.log(name, 'rsi:', currentRsi, '현재 가격:', currentPrice, '수익률:', profitRate);
       if (profitRate > sellCondition.minimumProfitRate && currentRsi > sellCondition.rsi) {
         await this.kisApiClient.sell({ ticker, quantity, price: currentPrice });
         console.log(`⭐️ ${name} 종목 ${currentPrice} 달러에 ${quantity}주 매도 진행 ⭐️(최소 수익률 및 rsi 충족)`);
@@ -71,6 +73,5 @@ export class SwingTraderService {
         console.log(`⭐️ ${name} 종목 ${currentPrice} 달러에 ${quantity}주 매도 진행 ⭐️(수익률 충족)`);
       }
     }
-    console.log('--- 매도 시도 완료 ---');
   }
 }

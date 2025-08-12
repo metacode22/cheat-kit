@@ -21,7 +21,7 @@ async function start() {
     } catch (error) {
       console.error(error);
     }
-  }, ONE_MINUTE * 3);
+  }, ONE_MINUTE);
 }
 
 start();
