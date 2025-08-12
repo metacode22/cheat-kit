@@ -20,14 +20,14 @@ export class SwingTraderService {
   private async tryBuy() {
     console.log('--- 매수 시도 ---');
     const myStocks = (await this.kisApiClient.getBalance()).output1;
-    for (const { name, ticker, quantity, buyCondition } of config.strategy.swing.targets) {
+    for (const { name, ticker, quantity, buyCondition, exchange } of config.strategy.swing.targets) {
       const 이미_보유중인_종목 = myStocks.find(({ ovrs_pdno }) => ticker === ovrs_pdno);
       if (이미_보유중인_종목) {
         console.log(`${name} 종목은 이미 ${이미_보유중인_종목.ovrs_cblc_qty}주 보유중입니다. `);
         continue;
       }
 
-      const { output2 } = await this.kisApiClient.getDailyPrice({ ticker });
+      const { output2 } = await this.kisApiClient.getDailyPrice({ ticker, exchange });
       const dailyClosingPrices = output2.map(({ clos }) => Number(clos)).reverse();
       const rsis = this.indicatorService.calculateRSI({ prices: dailyClosingPrices });
       const currentRsi = rsis[rsis.length - 1];
@@ -46,11 +46,11 @@ export class SwingTraderService {
   private async trySell() {
     console.log('--- 매도 시도 ---');
     const myStocks = (await this.kisApiClient.getBalance()).output1;
-    for (const { name, ticker, quantity, sellCondition } of config.strategy.swing.targets) {
+    for (const { name, ticker, quantity, sellCondition, exchange } of config.strategy.swing.targets) {
       const 이미_보유중인_종목 = myStocks.find(({ ovrs_pdno }) => ticker === ovrs_pdno);
       if (!이미_보유중인_종목) continue;
 
-      const { output2 } = await this.kisApiClient.getDailyPrice({ ticker });
+      const { output2 } = await this.kisApiClient.getDailyPrice({ ticker, exchange });
       const dailyClosingPrices = output2.map(({ clos }) => Number(clos)).reverse();
       const rsis = this.indicatorService.calculateRSI({ prices: dailyClosingPrices });
       const currentRsi = rsis[rsis.length - 1];

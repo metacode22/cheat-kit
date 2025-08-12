@@ -23,6 +23,7 @@ export const config = {
         {
           name: 'ASML',
           ticker: 'ASML',
+          exchange: 'NAS',
           quantity: 1,
           buyCondition: { rsi: 31 },
           sellCondition: { rsi: 68.5, minimumProfitRate: 5, profitRate: 12 },
@@ -30,6 +31,7 @@ export const config = {
         {
           name: '어플라이드 머티리얼즈',
           ticker: 'AMAT',
+          exchange: 'NAS',
           quantity: 2,
           buyCondition: { rsi: 31 },
           sellCondition: { rsi: 71, minimumProfitRate: 5, profitRate: 9 },
@@ -37,6 +39,7 @@ export const config = {
         {
           name: '아마존',
           ticker: 'AMZN',
+          exchange: 'NAS',
           quantity: 2,
           buyCondition: { rsi: 35 },
           sellCondition: { rsi: 67, minimumProfitRate: 5, profitRate: 8 },
@@ -44,6 +47,7 @@ export const config = {
         {
           name: '에어비앤비',
           ticker: 'ABNB',
+          exchange: 'NAS',
           quantity: 2,
           buyCondition: { rsi: 27.5 },
           sellCondition: { rsi: 68.5, minimumProfitRate: 5, profitRate: 8 },
@@ -51,6 +55,7 @@ export const config = {
         {
           name: '스타벅스',
           ticker: 'SBUX',
+          exchange: 'NAS',
           quantity: 2,
           buyCondition: { rsi: 27 },
           sellCondition: { rsi: 70, minimumProfitRate: 5, profitRate: 8 },
@@ -58,6 +63,7 @@ export const config = {
         {
           name: '인텔',
           ticker: 'INTC',
+          exchange: 'NAS',
           quantity: 10,
           buyCondition: { rsi: 27.5 },
           sellCondition: { rsi: 70, minimumProfitRate: 5, profitRate: 8 },
@@ -65,6 +71,7 @@ export const config = {
         {
           name: '월마트',
           ticker: 'WMT',
+          exchange: 'NYS',
           quantity: 5,
           buyCondition: { rsi: 36 },
           sellCondition: { rsi: 72, minimumProfitRate: 5, profitRate: 10 },
