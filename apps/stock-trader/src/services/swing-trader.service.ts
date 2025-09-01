@@ -25,22 +25,25 @@ export class SwingTraderService {
   /**
    * @todo 현재는 체결되지 않으면 계속해서 요청함.
    * 매수 넣으려는 종목이 이미 주문 내역에 존재한다면 매수 주문을 하지 않도록 수정 필요.
+   * log에서 가격은 현재 환율에 따라 원화로 계산해서 찍기
    */
   private async tryBuy() {
     const myStocks = (await this.kisApiClient.getBalance()).output1;
     for (const { name, ticker, quantity, buyCondition, exchange } of config.strategy.swing.targets) {
       const 이미_보유중인_종목 = myStocks.find(({ ovrs_pdno }) => ticker === ovrs_pdno);
-      if (이미_보유중인_종목) {
-        console.log(`${name} 종목은 이미 ${이미_보유중인_종목.ovrs_cblc_qty}주 보유중입니다. `);
-        continue;
-      }
 
       const { output2 } = await this.kisApiClient.getDailyPrice({ ticker, exchange });
       const dailyClosingPrices = output2.map(({ clos }) => Number(clos)).reverse();
       const rsis = this.indicatorService.calculateRSI({ prices: dailyClosingPrices });
       const currentRsi = rsis[rsis.length - 1];
       const currentPrice = dailyClosingPrices[dailyClosingPrices.length - 1];
-      console.log(name, 'rsi:', currentRsi, '현재 가격:', currentPrice);
+      console.log(name, 'rsi:', Number(currentRsi?.toFixed(1)), '현재 가격:', currentPrice);
+
+      if (이미_보유중인_종목) {
+        console.log(`${name} 종목은 이미 ${이미_보유중인_종목.ovrs_cblc_qty}주 보유중입니다. `);
+        continue;
+      }
+
       if (!currentRsi || !currentPrice) continue;
 
       if (currentRsi <= buyCondition.rsi) {

@@ -52,7 +52,7 @@ export class KisApiClient {
       OVRS_ORD_UNPR: price.toString(),
       ORD_SVR_DVSN_CD: '0',
     };
-    await kis.post('/uapi/overseas-stock/v1/trading/order', request, {
+    const response = await kis.post('/uapi/overseas-stock/v1/trading/order', request, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         appkey: config.kis.APP_KEY,
@@ -61,6 +61,7 @@ export class KisApiClient {
         custtype: 'P',
       },
     });
+    console.log(response.data);
   }
 
   public async sell({ ticker, quantity, price }: SellOrderRequestDto) {

@@ -15,13 +15,14 @@ async function start() {
   });
 
   const swingTraderService = Container.get(SwingTraderService);
+  swingTraderService.execute();
   setInterval(() => {
     try {
       swingTraderService.execute();
     } catch (error) {
       console.error(error);
     }
-  }, ONE_MINUTE);
+  }, ONE_MINUTE * 10);
 }
 
 start();
