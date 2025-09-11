@@ -14,11 +14,11 @@ export class SwingTraderService {
     console.log('--- 스윙 투자 실행 ---');
     console.log('--- 매수 시도');
     await this.tryBuy();
-    console.log('--- 매수 시도 완료');
+    console.log('--- 매수 시도');
     console.log('');
     console.log('--- 매도 시도');
     await this.trySell();
-    console.log('--- 매도 시도 완료');
+    console.log('--- 매도 시도');
     console.log('-------------------');
   }
 
