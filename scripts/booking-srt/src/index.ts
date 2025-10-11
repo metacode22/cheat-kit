@@ -1,8 +1,8 @@
-import puppeteer, { Browser, ElementHandle } from "puppeteer";
-import { MAX_RETRY_COUNT, SECONDS, SELECTORS, URLS } from "./constants";
-import { env } from "./env";
-import fs from "fs";
-import path from "path";
+import fs from 'fs';
+import path from 'path';
+import puppeteer, { ElementHandle } from 'puppeteer';
+import { MAX_RETRY_COUNT, SECONDS, SELECTORS, URLS } from './constants';
+import { env } from './env';
 
 const SRT_아이디 = env.SRT_아이디;
 const SRT_비밀번호 = env.SRT_비밀번호;
@@ -12,13 +12,13 @@ const 출발일 = env.출발일;
 const 출발시간 = env.출발시간;
 const 타겟_예매_유형들: TargetReservationTypes[] = env.타겟_예매_유형들;
 
-type TargetReservationTypes = "입석+좌석" | "예약하기";
+type TargetReservationTypes = '입석+좌석' | '예약하기';
 
 async function main() {
   // 브라우저 실행
   const browser = await puppeteer.launch({
     headless: false,
-    args: ["--start-maximized"],
+    args: ['--start-maximized'],
   });
 
   // 페이지 이동
@@ -51,14 +51,14 @@ async function main() {
     SELECTORS.DEPARTURE_STATION_INPUT,
   )) as ElementHandle<HTMLInputElement>;
   await departureStationInput.evaluate((element) => {
-    element.value = "";
+    element.value = '';
   });
   await departureStationInput.type(출발역);
   /**
    * @description srt 예매 사이트에서 onkeyup 이벤트가 따로 달려있음. 이 이벤트를 직접 발생시켜줘야 함. type 메서드로는 이벤트가 발생하지 않았음.
    */
   await departureStationInput?.evaluate((element) => {
-    const event = new Event("keyup", { bubbles: true });
+    const event = new Event('keyup', { bubbles: true });
     element?.dispatchEvent(event);
   });
 
@@ -67,7 +67,7 @@ async function main() {
     SELECTORS.ARRIVAL_STATION_INPUT,
   )) as ElementHandle<HTMLInputElement>;
   await arrivalStationInput.evaluate((element) => {
-    element.value = "";
+    element.value = '';
   });
   await arrivalStationInput.type(도착역);
   /**
@@ -75,7 +75,7 @@ async function main() {
    */
 
   await arrivalStationInput?.evaluate((element) => {
-    const event = new Event("keyup", { bubbles: true });
+    const event = new Event('keyup', { bubbles: true });
     element?.dispatchEvent(event);
   });
 
@@ -89,42 +89,43 @@ async function main() {
 
   // 시간 선택
   const departureTimeInput = await page.waitForSelector(SELECTORS.DEPARTURE_TIME_INPUT);
-  await departureTimeInput?.select(출발시간.padStart(2, "0") + "0000");
+  await departureTimeInput?.select(출발시간.padStart(2, '0') + '0000');
 
   // 조회하기 버튼 클릭
   const searchButton = await page.waitForSelector(`${SELECTORS.SEARCH_BUTTON}`);
   await searchButton?.click();
-  if (!searchButton) await page.keyboard.press("Enter");
+  if (!searchButton) await page.keyboard.press('Enter');
 
   // 페이지 이동 대기
   await page.waitForNavigation();
 
   // 예약할 수 있을 때까지 반복
   let retry = 0;
+  let isSuccess = false;
   while (retry < MAX_RETRY_COUNT) {
     retry++;
 
     // table 태그가 없으면 '조회하기' 버튼 클릭
-    const table = await page.$("table");
+    const table = await page.$('table');
     if (!table) {
       const searchButton = await page.waitForSelector(`${SELECTORS.SEARCH_BUTTON}`);
       await searchButton?.click();
     }
 
-    const rows = await page.$$("table tbody tr");
+    const rows = await page.$$('table tbody tr');
     for (let i = env.예약하고자_하는_기차_범위_시작 - 1; i < env.예약하고자_하는_기차_범위_종료; i++) {
       const row = rows[i];
 
       if (row) {
-        const link = await row.$("td:nth-child(7) a");
-        const span = await link?.$("span");
+        const link = await row.$('td:nth-child(7) a');
+        const span = await link?.$('span');
         const spanText = await span?.evaluate((element) => element.textContent);
         if (hasTargetReservationTypes(spanText)) {
           /**
            * @description "입석+좌석"이 타겟일 경우 alert 뜰 수 있음. 이를 닫음.
            */
-          page.on("dialog", async (dialog) => {
-            if (dialog.type() === "alert") {
+          page.on('dialog', async (dialog) => {
+            if (dialog.type() === 'alert') {
               await dialog.dismiss();
             }
           });
@@ -149,31 +150,35 @@ async function main() {
           /**
            * @description 예약 성공 소리 재생
            */
-          const successSound = fs.readFileSync(path.join(__dirname, "./success-sound.mp3"), { encoding: "base64" });
+          const successSound = fs.readFileSync(path.join(__dirname, './success-sound.mp3'), { encoding: 'base64' });
           const successSoundBase64 = `data:audio/mp3;base64,${successSound}`;
 
-          await page.evaluate((successSoundBase64) => {
+          await page.evaluate(async (successSoundBase64) => {
             const audio = new Audio(successSoundBase64);
-            audio.play();
-            console.log("succeed");
+            await audio.play();
+            console.log('succeed');
           }, successSoundBase64);
 
-          retry = MAX_RETRY_COUNT;
+          isSuccess = true;
 
           break;
         }
       }
     }
 
-    await wait(random(0.5 * SECONDS, 1 * SECONDS));
-    await page.reload();
-
-    if (retry >= MAX_RETRY_COUNT) {
-      console.log("최대 재시도 횟수 초과로 예약 실패");
-
-      await browser.close();
+    if (isSuccess) {
       break;
     }
+
+    await wait(random(0.5 * SECONDS, 1 * SECONDS));
+    await page.reload();
+  }
+
+  if (isSuccess) {
+    console.log('예약 성공! 브라우저를 종료하지 않습니다.');
+  } else {
+    console.log('최대 재시도 횟수 초과로 예약 실패');
+    await browser.close();
   }
 }
 
